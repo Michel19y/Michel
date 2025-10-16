@@ -1,26 +1,146 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>MICHEL</title>
-  <style>
-    body {
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      height:100vh;
-      margin:0;
-      background:#0f1724;
-      color:#fff;
-      font-family: Arial, sans-serif;
-    }
-    h1 {
-      font-size: 6vw;
-      letter-spacing:0.1em;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Descubra seu Clã Shinobi</title>
+<style>
+  body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: radial-gradient(circle at center, #0a0a0a, #000);
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+  }
+  .chakra {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,162,255,0.4), transparent 70%);
+    animation: pulse 2s infinite alternate;
+    filter: blur(10px);
+  }
+  @keyframes pulse {
+    from { transform: scale(0.9); opacity: 0.8; }
+    to { transform: scale(1.1); opacity: 1; }
+  }
+  .container {
+    text-align: center;
+    z-index: 2;
+    max-width: 90%;
+  }
+  button {
+    background: #007aff;
+    border: none;
+    padding: 12px 25px;
+    font-size: 1rem;
+    color: #fff;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background 0.3s;
+  }
+  button:hover {
+    background: #005fd1;
+  }
+  .question, .result {
+    display: none;
+    font-size: 1.2rem;
+  }
+  .active {
+    display: block;
+  }
+  img {
+    margin-top: 20px;
+    width: 120px;
+    opacity: 0;
+    transition: opacity 1s;
+  }
+  img.show {
+    opacity: 1;
+  }
+</style>
 </head>
 <body>
-  <h1>MICHEL</h1>
+<div class="chakra"></div>
+<div class="container">
+  <div class="intro active">
+    <h1>Descubra seu Clã Shinobi</h1>
+    <p>Concentre seu chakra e descubra a qual clã você pertence.</p>
+    <button onclick="startQuiz()">Iniciar o teste</button>
+  </div>
+  <div class="question"></div>
+  <div class="result"></div>
+</div>
+
+<script>
+const questions = [
+  { q: "Você age mais por instinto ou estratégia?", a: ["Instinto", "Estratégia"] },
+  { q: "Você prefere lutar sozinho ou em equipe?", a: ["Sozinho", "Equipe"] },
+  { q: "Seu poder vem mais da emoção ou da calma?", a: ["Emoção", "Calma"] }
+];
+
+const clans = {
+  Instinto: "Uchiha 🔥",
+  Estratégia: "Nara 🌑",
+  Sozinho: "Aburame 🐞",
+  Equipe: "Uzumaki 🍃",
+  Emoção: "Hyuga 👁️",
+  Calma: "Senju 🌳"
+};
+
+let current = 0;
+let answers = [];
+
+function startQuiz() {
+  document.querySelector('.intro').classList.remove('active');
+  showQuestion();
+}
+
+function showQuestion() {
+  const q = questions[current];
+  const div = document.querySelector('.question');
+  div.innerHTML = `<p>${q.q}</p>` + 
+  q.a.map(opt => `<button onclick="answer('${opt}')">${opt}</button>`).join('');
+  div.classList.add('active');
+}
+
+function answer(opt) {
+  answers.push(opt);
+  if (++current < questions.length) {
+    showQuestion();
+  } else {
+    showResult();
+  }
+}
+
+function showResult() {
+  document.querySelector('.question').classList.remove('active');
+  const result = document.querySelector('.result');
+  const final = clans[answers[answers.length-1]] || "Clã desconhecido 🤔";
+  result.innerHTML = `<h2>Você pertence ao ${final}</h2>
+                      <p>Seu chakra revela quem você é.</p>
+                      <img id="symbol" src="" alt="Símbolo do clã">`;
+  result.classList.add('active');
+
+  // Define símbolo
+  const img = document.getElementById('symbol');
+  const map = {
+    "Uchiha 🔥": "https://i.imgur.com/w0LzjTg.png",
+    "Nara 🌑": "https://i.imgur.com/VN5oB6O.png",
+    "Aburame 🐞": "https://i.imgur.com/HEupEDa.png",
+    "Uzumaki 🍃": "https://i.imgur.com/YpUqkON.png",
+    "Hyuga 👁️": "https://i.imgur.com/qXzZ91P.png",
+    "Senju 🌳": "https://i.imgur.com/L09aPiQ.png"
+  };
+  img.src = map[final] || "";
+  setTimeout(() => img.classList.add('show'), 500);
+}
+</script>
 </body>
 </html>
